@@ -44,7 +44,7 @@ static void on_trackbar(int, void*)
 {
     //scale = 1.0 / (double)(scale_slider + 1);
 //    scale = ((0.01 - 0.005) / 20.0) * scale_slider + 0.001;
-    double sigma = (sigma_slider+1.0)/ (double)sigma_slider_max;
+    double sigma = 2.0 * (sigma_slider + 1.0) / (double)sigma_slider_max;
     uint64_t position = MM_SIGMA_POS;
 
     mm.write(MM_SIGMA_POS, sigma);

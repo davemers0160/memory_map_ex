@@ -99,12 +99,18 @@ message(" ")
 
 include_directories(${project_includes})
 
-
 add_executable(mmap_l "src/mmap_left.cpp")
-target_link_libraries(mmap_l ${project_libs})
-
 add_executable(mmap_r "src/mmap_right.cpp")
-target_link_libraries(mmap_r ${project_libs})
+
+
+if(WIN32)
+    target_link_libraries(mmap_l ${project_libs})
+    target_link_libraries(mmap_r ${project_libs})
+else()
+    target_link_libraries(mmap_l ${project_libs} pthread rt)
+    target_link_libraries(mmap_r ${project_libs} pthread rt)
+endif()
+
 
 if(WIN32)
     #message("MSVC Version: " ${MSVC_VERSION})

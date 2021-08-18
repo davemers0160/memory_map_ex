@@ -32,7 +32,7 @@
 std::string window_name = "image";
 cv::Mat cv_image;
 
-const int sigma_slider_max = 10;
+const int sigma_slider_max = 20;
 int sigma_slider = 8;
 
 mem_map mm(mem_space_name, mem_size);
@@ -42,16 +42,14 @@ std::vector<uint8_t> image_data;
 
 static void on_trackbar(int, void*)
 {
-    //scale = 1.0 / (double)(scale_slider + 1);
-//    scale = ((0.01 - 0.005) / 20.0) * scale_slider + 0.001;
-    double sigma = 2.0 * (sigma_slider + 1.0) / (double)sigma_slider_max;
-    uint64_t position = MM_SIGMA_POS;
+
+    double sigma = 2.0 * (sigma_slider/ (double)sigma_slider_max) + 0.1;
+    
+    std::cout << "sigma: " << sigma << std::endl;
 
     mm.write(MM_SIGMA_POS, sigma);
 
-    position = MM_IMAGE_POS;
-
-    mm.read_range(position, 512*512, image_data);
+    mm.read_range(MM_IMAGE_POS, 512*512, image_data);
 
     cv_image = cv::Mat(512, 512, CV_8UC1, image_data.data());
 
@@ -96,11 +94,8 @@ int main(int argc, char** argv)
 
         cv::createTrackbar(sigma_tb, window_name, &sigma_slider, sigma_slider_max-1, on_trackbar);
 
-
-
         on_trackbar(0, 0);
         cv::waitKey(0);
-
 
         int bp = 1;
     }
@@ -109,7 +104,10 @@ int main(int argc, char** argv)
         std::cout << "error: " << e.what() << std::endl;
     }
     
+    mm.close();
         
+    cv::destroyAllWindows();
+    
     std::cout << "Press enter to close..." << std::endl;
     std::cin.ignore();
 

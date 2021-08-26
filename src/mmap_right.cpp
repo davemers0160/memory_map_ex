@@ -20,7 +20,6 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/imgcodecs.hpp>
 
-
 // Project Includes
 #include "mmap_test.h"
 #include "mmap.h"
@@ -30,12 +29,9 @@
 // ----------------------------------------------------------------------------
 cv::Mat cv_image;
 
-cv_mem *test_data;
+cv_mem *test_data = NULL;
 
 mem_map<cv_mem> mm(mem_space_name, test_data);
-
-std::vector<uint8_t> image_data;
-
 
 // ----------------------------------------------------------------------------
 int main(int argc, char** argv)
@@ -50,49 +46,31 @@ int main(int argc, char** argv)
     auto elapsed_time = std::chrono::duration_cast<d_sec>(stop_time - start_time);
 
     std::cout << "This side will load in an image and store in an OpenCV Mat" << std::endl;
-
     std::cout << "The other side will send the sigma value using the memory mapped location" << std::endl;
-
     std::cout << "press enter once the other side is up and running" << std::endl;
-
-    //std::cin.ignore();
 
     cv::Mat src_image = cv::imread("../checker_board_512x512.png", cv::IMREAD_GRAYSCALE);
 
     cv_image = cv::Mat(src_image.rows, src_image.cols, CV_8UC1, test_data->data);
-    uint64_t img_size = src_image.rows * src_image.cols;
 
     test_data->img_h = src_image.rows;
     test_data->img_w = src_image.cols;
-
-    //uint64_t position = MM_START;
-    //mm.write(MM_START, (uint8_t)0);
-    //mm.write(MM_SIGMA_POS, (double)0.1);
-
-    double sigma = 0.0;
+    test_data->sigma = 0.1;
 
     try
     {
         char key = 0;
         while (key != 'q')
         {
-            // read in the sigma value
-            //mm.read(MM_SIGMA_POS, sigma);
-/*
-//            std::cout << "sigma: " << sigma << std::endl;
-            std::cout << "sigma: " << test_data.sigma << std::endl;
+            //std::cout << "sigma: " << test_data->sigma << std::endl;
 
             //do the blurring on the image
-            if(test_data.sigma > 0.0)
+            if(test_data->sigma > 0.0)
             {
-                std::cout << "y";
-                cv::GaussianBlur(src_image, cv_image, cv::Size(0, 0), test_data.sigma, test_data.sigma, cv::BORDER_REPLICATE);
+                cv::GaussianBlur(src_image, cv_image, cv::Size(0, 0), test_data->sigma, test_data->sigma, cv::BORDER_REPLICATE);
             }
-*/            
-            cv::imshow("test", cv_image);
             
-            //mm.write_range(MM_IMAGE_POS, img_size, cv_image.ptr(0));
-
+            cv::imshow("test", cv_image);
             key = cv::waitKey(20);
 
         }

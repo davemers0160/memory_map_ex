@@ -21,6 +21,34 @@ const uint64_t MM_IMAGE_POS = MM_SIGMA_POS + sizeof(double);
 
 
 
+typedef struct cv_mem
+{
+
+	double sigma;
+	int32_t img_w;
+	int32_t img_h;
+
+	uint8_t data[mem_size];
+
+	//cv_mem(uint8_t* d, uint64_t size)
+	//{
+	//	sigma = *reinterpret_cast<double*>(d);
+
+	//	img_w = *reinterpret_cast<int32_t*>(d + 8);
+	//	img_h = *reinterpret_cast<int32_t*>(d + 12);
+	//	data = d + 16;
+
+	//}
+
+
+
+} cv_mem;
+
+
+
+
+
+
 
 
 // ----------------------------------------------------------------------------

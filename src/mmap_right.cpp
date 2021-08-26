@@ -30,7 +30,9 @@
 // ----------------------------------------------------------------------------
 cv::Mat cv_image;
 
-mem_map mm(mem_space_name, mem_size);
+cv_mem *test_data;
+
+mem_map<cv_mem> mm(mem_space_name, test_data);
 
 std::vector<uint8_t> image_data;
 
@@ -57,12 +59,15 @@ int main(int argc, char** argv)
 
     cv::Mat src_image = cv::imread("../checker_board_512x512.png", cv::IMREAD_GRAYSCALE);
 
-    cv_image = cv::Mat(src_image.rows, src_image.cols, CV_8UC1);
+    cv_image = cv::Mat(src_image.rows, src_image.cols, CV_8UC1, test_data->data);
     uint64_t img_size = src_image.rows * src_image.cols;
 
+    test_data->img_h = src_image.rows;
+    test_data->img_w = src_image.cols;
+
     //uint64_t position = MM_START;
-    mm.write(MM_START, (uint8_t)0);
-    mm.write(MM_SIGMA_POS, (double)0.1);
+    //mm.write(MM_START, (uint8_t)0);
+    //mm.write(MM_SIGMA_POS, (double)0.1);
 
     double sigma = 0.0;
 
@@ -72,21 +77,21 @@ int main(int argc, char** argv)
         while (key != 'q')
         {
             // read in the sigma value
-            //position = MM_SIGMA_POS;
-            mm.read(MM_SIGMA_POS, sigma);
-
-            std::cout << "sigma: " << sigma << std::endl;
+            //mm.read(MM_SIGMA_POS, sigma);
+/*
+//            std::cout << "sigma: " << sigma << std::endl;
+            std::cout << "sigma: " << test_data.sigma << std::endl;
 
             //do the blurring on the image
-            if(sigma > 0.0)
+            if(test_data.sigma > 0.0)
             {
                 std::cout << "y";
-                cv::GaussianBlur(src_image, cv_image, cv::Size(0, 0), sigma, sigma, cv::BORDER_REPLICATE);
+                cv::GaussianBlur(src_image, cv_image, cv::Size(0, 0), test_data.sigma, test_data.sigma, cv::BORDER_REPLICATE);
             }
-            
+*/            
             cv::imshow("test", cv_image);
             
-            mm.write_range(MM_IMAGE_POS, img_size, cv_image.ptr(0));
+            //mm.write_range(MM_IMAGE_POS, img_size, cv_image.ptr(0));
 
             key = cv::waitKey(20);
 
@@ -99,7 +104,7 @@ int main(int argc, char** argv)
         std::cout << "error: " << e.what() << std::endl;
     }
     
-    mm.close();
+    mm.close(test_data);
 
     cv::destroyAllWindows();
         

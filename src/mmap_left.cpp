@@ -35,7 +35,9 @@ cv::Mat cv_image;
 const int sigma_slider_max = 20;
 int sigma_slider = 8;
 
-mem_map mm(mem_space_name, mem_size);
+cv_mem *test_data;
+
+mem_map<cv_mem> mm(mem_space_name, test_data);
 
 std::vector<uint8_t> image_data;
 
@@ -47,11 +49,13 @@ static void on_trackbar(int, void*)
     
     std::cout << "sigma: " << sigma << std::endl;
 
-    mm.write(MM_SIGMA_POS, sigma);
+    test_data->sigma = sigma;
 
-    mm.read_range(MM_IMAGE_POS, 512*512, image_data);
+    //mm.write(MM_SIGMA_POS, sigma);
 
-    cv_image = cv::Mat(512, 512, CV_8UC1, image_data.data());
+    //mm.read_range(MM_IMAGE_POS, 512*512, image_data);
+
+//    cv_image = cv::Mat(512, 512, CV_8UC1, image_data.data());
 
     cv::imshow(window_name, cv_image);
 }
@@ -78,11 +82,12 @@ int main(int argc, char** argv)
 
     std::cin.ignore();
 
-    cv_image = cv::Mat(10, 10, CV_8UC3, cv::Scalar::all(255));
+//    cv_image = cv::Mat(10, 10, CV_8UC3, cv::Scalar::all(255), *(test_data->data));
+    cv_image = cv::Mat(test_data->img_h, test_data->img_w, CV_8UC1, test_data->data);
 
     uint64_t position = MM_START;
 
-    mm.write(position, (uint8_t)0);
+    //mm.write(position, (uint8_t)0);
 
 
     try
@@ -104,7 +109,7 @@ int main(int argc, char** argv)
         std::cout << "error: " << e.what() << std::endl;
     }
     
-    mm.close();
+    mm.close(test_data);
         
     cv::destroyAllWindows();
     

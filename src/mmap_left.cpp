@@ -35,14 +35,14 @@ int sigma_slider = 8;
 
 cv_mem *test_data = NULL;
 
-mem_map<cv_mem> mm(mem_space_name, test_data);
+mem_map<cv_mem> mm;
 
 static void on_trackbar(int, void*)
 {
 
     double sigma = 2.0 * (sigma_slider/ (double)sigma_slider_max) + 0.1;
     
-    std::cout << "sigma: " << sigma << std::endl;
+    //std::cout << "sigma: " << sigma << std::endl;
 
     // write sigma out to memory
     test_data->sigma = sigma;
@@ -61,6 +61,8 @@ int main(int argc, char** argv)
     auto start_time = std::chrono::system_clock::now();
     auto stop_time = std::chrono::system_clock::now();
     auto elapsed_time = std::chrono::duration_cast<d_sec>(stop_time - start_time);
+
+    mm.init(mem_space_name, test_data);
 
     std::cout << "This side will display an image in an OpenCV window.  Use the slider to change the blur of the image." << std::endl;
     std::cout << "The other side will open the image and perform the image manipulation based on the slider value sent" << std::endl;

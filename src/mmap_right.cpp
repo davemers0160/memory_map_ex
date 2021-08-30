@@ -31,7 +31,7 @@ cv::Mat cv_image;
 
 cv_mem *test_data = NULL;
 
-mem_map<cv_mem> mm(mem_space_name, test_data);
+mem_map<cv_mem> mm; // (mem_space_name, test_data);
 
 // ----------------------------------------------------------------------------
 int main(int argc, char** argv)
@@ -44,6 +44,8 @@ int main(int argc, char** argv)
     auto start_time = std::chrono::system_clock::now();
     auto stop_time = std::chrono::system_clock::now();
     auto elapsed_time = std::chrono::duration_cast<d_sec>(stop_time - start_time);
+
+    mm.init(mem_space_name, test_data);
 
     std::cout << "This side will load in an image and store in an OpenCV Mat" << std::endl;
     std::cout << "The other side will send the sigma value using the memory mapped location" << std::endl;
